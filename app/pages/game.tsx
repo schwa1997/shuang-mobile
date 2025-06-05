@@ -1,24 +1,24 @@
-import { useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-  Platform,
-  Modal,
-  ScrollView,
-  Animated,
-  Easing,
-  ImageBackground,
-  Dimensions,
-} from "react-native";
+import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import { FontAwesome5, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Animated,
+  Dimensions,
+  Easing,
+  ImageBackground,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -184,7 +184,7 @@ export default function IndexTab() {
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category_id, setCategoryId] = useState(1);
+  const [category_id, setCategoryId] = useState(0);
   const [due_date, setDueDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [coins, setCoins] = useState(0);
@@ -241,7 +241,7 @@ export default function IndexTab() {
 
       // 获取类别
       const categoriesRes = await fetch(
-        "http://127.0.0.1:8000/api/categories",
+        "http://127.0.0.1:8000/api/todo-categories",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -249,20 +249,18 @@ export default function IndexTab() {
       const categoriesData = await categoriesRes.json();
 
       // 获取用户金币
-      const userRes = await fetch(
-        `http://127.0.0.1:8000/api/users/${user_id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const userRes = await fetch(`http://127.0.0.1:8000/api/users/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const userData = await userRes.json();
 
       setTodos(todosData);
       setCategories(categoriesData);
+      setCategoryId(categoriesData[0].category_id);
       setCoins(userData.total_coins || 0);
     } catch (e: any) {
       Alert.alert("错误", e.message);
@@ -393,7 +391,7 @@ export default function IndexTab() {
       const res = await fetch(
         `http://127.0.0.1:8000/api/todos/${todo_id}/complete`,
         {
-          method: "POST",
+          method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -560,7 +558,7 @@ export default function IndexTab() {
           },
         ]}
       >
-         <View style={styles.roomHeader}>
+        <View style={styles.roomHeader}>
           <FontAwesome5 name={roomTheme.icon} size={28} color="#FFF" />
           <Text style={styles.roomTitle}>
             {categories[currentRoom]?.category_name || "加载中..."} 房间
@@ -1166,8 +1164,8 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   roomHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
 });

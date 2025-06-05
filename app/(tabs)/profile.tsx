@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
@@ -16,7 +16,7 @@ export default function ProfileScreen() {
         return;
       }
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/users/${user_id}`, {
+        const res = await fetch(`http://127.0.0.1:8000/api/users/me`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -44,19 +44,47 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>个人信息</Text>
-      <Text style={styles.info}>用户名：{profile.username}</Text>
-      <Text style={styles.info}>邮箱：{profile.email}</Text>
-      <Text style={styles.info}>金币：{profile.total_coins}</Text>
-      <Text style={styles.info}>连续天数：{profile.streak_count}</Text>
-      <Button
-        title="退出登录"
-        onPress={async () => {
-          await AsyncStorage.removeItem("token");
-          await AsyncStorage.removeItem("user_id");
-          router.replace("/login");
-        }}
-      />
+      <View style={styles.profileCard}>
+        {/* Profile Header */}
+        <View style={styles.header}>
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarText}>
+              {profile.username.charAt(0).toUpperCase()}
+            </Text>
+          </View>
+          <Text style={styles.title}>User Profile</Text>
+        </View>
+
+        {/* User Info */}
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>👤 Username:</Text>
+            <Text style={styles.infoValue}>{profile.username}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>✉️ Email:</Text>
+            <Text style={styles.infoValue}>{profile.email}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>🪙 Coins:</Text>
+            <Text style={styles.infoValue}>{profile.total_coins}</Text>
+          </View>
+        </View>
+
+        {/* Logout Button */}
+        <Pressable
+          style={styles.logoutButton}
+          onPress={async () => {
+            await AsyncStorage.removeItem("token");
+            await AsyncStorage.removeItem("user_id");
+            router.replace("/login");
+          }}
+        >
+          <Text style={styles.buttonText}>Log Out</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -64,15 +92,76 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f0faf7",
+    paddingTop: 80,
+    padding: 20,
+  },
+  profileCard: {
+    backgroundColor: "#ffffff",
+    borderRadius: 35,
+    padding: 30,
+    shadowColor: "#2e7d32",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  avatarPlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#e8f5e9",
     justifyContent: "center",
-    padding: 24,
-    backgroundColor: "#fff",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  avatarText: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#1b5e20",
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 24,
-    alignSelf: "center",
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#1b5e20",
+    letterSpacing: 0.5,
   },
-  info: { fontSize: 18, marginBottom: 12 },
+  infoContainer: {
+    marginBottom: 25,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8f5e9",
+  },
+  infoLabel: {
+    fontSize: 14,
+    color: "#37474f",
+    fontWeight: "500",
+  },
+  infoValue: {
+    fontSize: 12,
+    color: "#1b5e20",
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: "#4caf50",
+    paddingVertical: 16,
+    borderRadius: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "600",
+  },
 });

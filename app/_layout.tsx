@@ -24,7 +24,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }}  />
         <Stack.Screen name="login" options={{ title: "登录" }} />
         <Stack.Screen name="register" options={{ title: "注册" }} />
         <Stack.Screen name="profile" options={{ title: "个人信息" }} />

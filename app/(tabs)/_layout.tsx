@@ -1,59 +1,133 @@
+import { HapticTab } from "@/components/HapticTab";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
-
+import { StyleSheet, View } from "react-native";
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: "#ffffff",
+        tabBarInactiveTintColor: "#9e9e9e",
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {},
-        }),
+        tabBarBackground: () => <View style={styles.tabBarBackground} />,
+        tabBarStyle: styles.tabBarContainer,
+        tabBarItemStyle: styles.tabBarItem,
+        tabBarLabelStyle: styles.tabBarLabel,
       }}
     >
       <Tabs.Screen
-        name="coin"
+        name="index"
         options={{
-          title: "金币",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="star.fill" color={color} />
-          ),
-        }}
-      />
-       <Tabs.Screen
-        name="Game"
-        options={{
-          title: "Game",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="star.fill" color={color} />
+          title: "",
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <MaterialCommunityIcons
+                size={26}
+                name={focused ? "calendar-check" : "calendar-blank-outline"}
+                color={focused ? "#FFFFFF" : color}
+              />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
-        name="user"
+        name="wish"
         options={{
-          title: "我的",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.circle" color={color} />
+          title: "",
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <MaterialCommunityIcons
+                size={26}
+                name={focused ? "heart" : "heart-outline"}
+                color={focused ? "#FFFFFF" : color}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "",
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <MaterialCommunityIcons
+                size={26}
+                name={focused ? "account-circle" : "account-circle-outline"}
+                color={focused ? "#FFFFFF" : color}
+              />
+            </View>
           ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarContainer: {
+    position: "absolute",
+    bottom: 50,
+    height: 60,
+    backgroundColor: "#f0faf7",
+    elevation: 8,
+    borderTopWidth: 0,
+    shadowColor: "#f0faf7",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 0,
+    display: "flex",
+    alignSelf: "center",
+  },
+  tabBarBackground: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    borderRadius: 35,
+    width: "90%",
+    alignSelf: "center",
+  },
+  tabBarItem: {
+    height: 40,
+    paddingTop: 7,
+    paddingBottom: 0,
+  },
+  tabBarLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  activeIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    alignSelf: "center",
+    backgroundColor: "#2E7D32",
+    alignItems: "center",
+  },
+});

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function RegisterScreen({ navigation }: any) {
   const [username, setUsername] = useState("");
